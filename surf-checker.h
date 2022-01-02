@@ -4,6 +4,7 @@
 #include <WiFiNINA.h>
 #include <ArduinoJson.h>
 // #define ARDUINOJSON_USE_DOUBLE 1
+#include <constants.h>
 
 class Surf_Checker
 {
@@ -11,19 +12,29 @@ public:
     WiFiClient client;
     String spot_id = "5842041f4e65fad6a7708bca"; // grande plage Biarritz;
     String nb_days = "1";
-    String interval_hours = "3";
-    String HOST_NAME[3] = {"worldtimeapi.org", "services.surfline.com", "services.surfline.com"};
-    String PATH_NAME[3] = {"/api/", "/kbyg/spots/forecasts/", "/kbyg/spots/forecasts/"};
-    String QUERY[3] = {"ip", "wave?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + interval_hours, "wind?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + interval_hours};
+    uint8_t interval_hours = 3;
+    char const *host_name[3] = {"worldtimeapi.org", "services.surfline.com", "services.surfline.com"};
+    String path_name[3] = {"/api/", "/kbyg/spots/forecasts/", "/kbyg/spots/forecasts/"};
+    String query[3] = {"ip", "wave?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + interval_hours, "wind?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours)};
 
     long unixtime = 0;
     int status = WL_IDLE_STATUS;
+    float wind_speed = 0;
+    double wind_direction = 0;
+    float swell_heights[6];
+    double swell_directions[6];
+    int swell_periods[6];
 
     Surf_Checker(char *ssid, char *pass);
     void print_wifi_status();
     bool connect(char *ssid, char *pass);
-    bool http_request(char *host_name, String path_name, String query_string);
-    bool parse_http_response();
+    // bool http_request(char const *host_name, String path_name, String query_string);
+    bool http_request(HttpDataType type);
+    bool parse_http_response(HttpDataType type);
+
+    void get_time();
+    void get_wave();
+    void get_wind();
 
 private:
 };

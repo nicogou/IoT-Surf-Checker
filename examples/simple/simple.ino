@@ -8,6 +8,11 @@ char pass[] = WIFI_PASS; // your network password (use for WPA, or use as key fo
 void setup()
 {
     s_f = new Surf_Checker(ssid, pass);
+    s_f->get_time();
+    delay(1000);
+    s_f->get_wave();
+    delay(1000);
+    s_f->get_wind();
 }
 
 void loop()
