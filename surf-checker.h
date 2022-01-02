@@ -1,7 +1,7 @@
 #ifndef Surf_Checker_h
 #define Surf_Checker_h
 
-#include <WiFiNINA.h>
+#include <WiFiNINA_Generic.h>
 #include <ArduinoJson.h>
 // #define ARDUINOJSON_USE_DOUBLE 1
 #include <constants.h>
@@ -26,6 +26,7 @@ public:
     int swell_periods[6];
 
     Surf_Checker(char *ssid, char *pass);
+    Surf_Checker();
     void print_wifi_status();
     bool connect(char *ssid, char *pass);
     // bool http_request(char const *host_name, String path_name, String query_string);

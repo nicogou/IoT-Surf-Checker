@@ -19,6 +19,15 @@ Surf_Checker::Surf_Checker(char *ssid, char *pass)
     }
 }
 
+Surf_Checker::Surf_Checker()
+{
+    Serial.begin(9600);
+    while (!Serial)
+    {
+        ; // wait for serial port to connect. Needed for native USB port only
+    }
+}
+
 bool Surf_Checker::connect(char *ssid, char *pass)
 {
     // check for the WiFi module:
