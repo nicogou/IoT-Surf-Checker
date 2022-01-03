@@ -288,17 +288,31 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
     return false;
 }
 
+void Surf_Checker::get_data(HttpDataType type)
+{
+    unsigned long counter = millis();
+    while (!http_request(type))
+    {
+        delay(200);
+        if (millis() - counter >= query_timeout)
+        {
+            // TODO: add error handling when a timeout is reached.
+            break;
+        }
+    }
+}
+
 void Surf_Checker::get_time()
 {
-    http_request(TIME);
+    get_data(TIME);
 }
 
 void Surf_Checker::get_wave()
 {
-    http_request(WAVE);
+    get_data(WAVE);
 }
 
 void Surf_Checker::get_wind()
 {
-    http_request(WIND);
+    get_data(WIND);
 }

@@ -16,6 +16,7 @@ public:
     char const *host_name[3] = {"worldtimeapi.org", "services.surfline.com", "services.surfline.com"};
     String path_name[3] = {"/api/", "/kbyg/spots/forecasts/", "/kbyg/spots/forecasts/"};
     String query[3] = {"ip", "wave?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours), "wind?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours)};
+    unsigned long query_timeout = 2000;
 
     long unixtime = 0;
     int status = WL_IDLE_STATUS;
@@ -35,6 +36,7 @@ public:
 
     bool update_spot_id(String sid);
 
+    void get_data(HttpDataType type);
     void get_time();
     void get_wave();
     void get_wind();
