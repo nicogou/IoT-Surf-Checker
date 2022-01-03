@@ -294,7 +294,24 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
     return false;
 }
 
-void Surf_Checker::get_data(HttpDataType type)
+void Surf_Checker::get_data()
+{
+    if (!get_time())
+    {
+        error = true;
+    }
+    if (!get_wave())
+    {
+        error = true;
+    }
+    if (!get_wind())
+    {
+        error = true;
+    }
+    error = false;
+}
+
+bool Surf_Checker::get_data(HttpDataType type)
 {
     unsigned long counter = millis();
     while (!http_request(type))
@@ -302,23 +319,23 @@ void Surf_Checker::get_data(HttpDataType type)
         delay(200);
         if (millis() - counter >= query_timeout)
         {
-            // TODO: add error handling when a timeout is reached.
-            break;
+            return false;
         }
     }
+    return true;
 }
 
-void Surf_Checker::get_time()
+bool Surf_Checker::get_time()
 {
-    get_data(TIME);
+    return get_data(TIME);
 }
 
-void Surf_Checker::get_wave()
+bool Surf_Checker::get_wave()
 {
-    get_data(WAVE);
+    return get_data(WAVE);
 }
 
-void Surf_Checker::get_wind()
+bool Surf_Checker::get_wind()
 {
-    get_data(WIND);
+    return get_data(WIND);
 }

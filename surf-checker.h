@@ -25,6 +25,7 @@ public:
     float swell_heights[SWELL_NB];
     double swell_directions[SWELL_NB];
     int swell_periods[SWELL_NB];
+    bool error = false;
 
     Surf_Checker(char *ssid, char *pass);
     Surf_Checker();
@@ -37,10 +38,11 @@ public:
     bool update_spot_id(String sid);
     void build_query();
 
-    void get_data(HttpDataType type);
-    void get_time();
-    void get_wave();
-    void get_wind();
+    void get_data();
+    bool get_data(HttpDataType type);
+    bool get_time();
+    bool get_wave();
+    bool get_wind();
 
 private:
 };

@@ -24,11 +24,12 @@ void heartBeatPrint(void)
     if (WiFi.status() == WL_CONNECTED)
     {
         // Serial.print("H"); // H means connected to WiFi
-        s_f->get_time();
-        delay(1000);
-        s_f->get_wave();
-        delay(1000);
-        s_f->get_wind();
+        // s_f->get_time();
+        // delay(1000);
+        // s_f->get_wave();
+        // delay(1000);
+        // s_f->get_wind();
+        s_f->get_data();
     }
     else
         Serial.print("F"); // F means not connected to WiFi
