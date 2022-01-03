@@ -35,6 +35,7 @@ public:
     bool parse_http_response(HttpDataType type);
 
     bool update_spot_id(String sid);
+    void build_query();
 
     void get_data(HttpDataType type);
     void get_time();

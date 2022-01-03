@@ -34,9 +34,14 @@ bool Surf_Checker::update_spot_id(String sid)
     {
         Serial.println("Previous Spot Id : " + spot_id + "\t\t New Spot Id : " + sid);
         spot_id = sid;
-        query[1] = "wave?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours);
-        query[2] = "wind?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours);
     }
+}
+
+void Surf_Checker::build_query()
+{
+    query[0] = "ip";
+    query[1] = "wave?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours);
+    query[2] = "wind?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours);
 }
 
 bool Surf_Checker::connect(char *ssid, char *pass)
@@ -91,6 +96,7 @@ void Surf_Checker::print_wifi_status()
 
 bool Surf_Checker::http_request(HttpDataType type)
 {
+    build_query();
     int type_int = (int)type;
     // if there's a successful connection:
     if (client.connect(host_name[type_int], 80))
