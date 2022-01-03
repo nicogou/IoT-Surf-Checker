@@ -139,9 +139,9 @@ void displayCredentialsInLoop()
 void loop()
 {
     WiFiManager_NINA->run();
-    check_status();
-
 #if USE_DYNAMIC_PARAMETERS
     displayCredentialsInLoop();
+    s_f->update_spot_id(myMenuItems[1].pdata);
 #endif
+    check_status();
 }

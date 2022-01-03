@@ -28,6 +28,17 @@ Surf_Checker::Surf_Checker()
     }
 }
 
+bool Surf_Checker::update_spot_id(String sid)
+{
+    if (spot_id != sid)
+    {
+        Serial.println("Previous Spot Id : " + spot_id + "\t\t New Spot Id : " + sid);
+        spot_id = sid;
+        query[1] = "wave?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours);
+        query[2] = "wind?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours);
+    }
+}
+
 bool Surf_Checker::connect(char *ssid, char *pass)
 {
     // check for the WiFi module:
