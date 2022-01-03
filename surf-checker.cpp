@@ -238,6 +238,44 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
             Serial.println();
         }
 
+        float temp_h;
+        double temp_d;
+        int temp_p;
+
+        // sorting - Descending ORDER
+        for (int ii = 0; ii < SWELL_NB; ii++)
+        {
+            for (int jj = ii + 1; jj < SWELL_NB; jj++)
+            {
+                if (swell_heights[ii] < swell_heights[jj])
+                {
+                    temp_h = swell_heights[ii];
+                    swell_heights[ii] = swell_heights[jj];
+                    swell_heights[jj] = temp_h;
+
+                    temp_d = swell_directions[ii];
+                    swell_directions[ii] = swell_directions[jj];
+                    swell_directions[jj] = temp_d;
+
+                    temp_p = swell_periods[ii];
+                    swell_periods[ii] = swell_periods[jj];
+                    swell_periods[jj] = temp_p;
+                }
+            }
+        }
+
+        Serial.println("Swell (sorted)");
+        Serial.println("Heights\tPeriods\tDirections");
+        for (int ii = 0; ii < SWELL_NB; ii++)
+        {
+            Serial.print(swell_heights[ii]);
+            Serial.print("\t");
+            Serial.print(swell_periods[ii]);
+            Serial.print("\t\t");
+            Serial.print(swell_directions[ii]);
+            Serial.println();
+        }
+
         return true;
     }
     else if (type == WIND)
