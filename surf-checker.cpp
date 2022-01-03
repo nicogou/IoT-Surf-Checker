@@ -228,7 +228,7 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
         }
         Serial.println("Swell");
         Serial.println("Heights\tPeriods\tDirections");
-        for (int ii = 0; ii < 6; ii++)
+        for (int ii = 0; ii < SWELL_NB; ii++)
         {
             Serial.print(swell_heights[ii]);
             Serial.print("\t");

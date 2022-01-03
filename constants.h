@@ -3,6 +3,7 @@
 
 #define NB_REQUESTS 3
 #define QUERY_TIMEOUT 2000
+#define SWELL_NB 6
 
 enum HttpDataType
 {
