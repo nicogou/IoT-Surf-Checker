@@ -38,8 +38,8 @@
 #define MAX_SPOT_NAME_LEN 34
 #define MAX_SPOT_ID_LEN 34
 
-char Name_Spot1[MAX_SPOT_NAME_LEN + 1] = "";
-char Id_Spot1[MAX_SPOT_ID_LEN + 1] = "";
+char Name_Spot1[MAX_SPOT_NAME_LEN + 1] = "Cote des Basques";
+char Id_Spot1[MAX_SPOT_ID_LEN + 1] = "5842041f4e65fad6a7708bcf";
 
 // char Name_Spot2 [MAX_SPOT_NAME_LEN + 1]  = "";
 // char Id_Spot2  [MAX_SPOT_ID_LEN + 1]   = "";

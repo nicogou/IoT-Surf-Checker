@@ -11,7 +11,7 @@
   **********************************************************************************************************************************/
 
 #include "defines.h"
-#include "Credentials.h"
+#include "Credentials_secret.h"
 #include "dynamicParams.h"
 #include "surf-checker.h"
 
