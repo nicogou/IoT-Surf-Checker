@@ -337,14 +337,17 @@ void Surf_Checker::get_data()
     if (!get_time())
     {
         error = true;
+        return;
     }
     if (!get_wave())
     {
         error = true;
+        return;
     }
     if (!get_wind())
     {
         error = true;
+        return;
     }
     error = false;
 }
