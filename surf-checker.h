@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 // #define ARDUINOJSON_USE_DOUBLE 1
 #include <constants.h>
+#include <FastLED.h>
 
 class Surf_Checker
 {
@@ -27,6 +28,8 @@ public:
     int swell_periods[SWELL_NB];
     bool error = false;
 
+    CRGB leds[NUM_LEDS]; // Stores the LED colors (only status LED for now).
+
     Surf_Checker(char *ssid, char *pass);
     Surf_Checker();
     void print_wifi_status();
@@ -43,6 +46,8 @@ public:
     bool get_time();
     bool get_wave();
     bool get_wind();
+
+    void display_data();
 
 private:
 };

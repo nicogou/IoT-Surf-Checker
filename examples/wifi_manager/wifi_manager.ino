@@ -19,11 +19,10 @@ Surf_Checker *s_f;
 
 void heartBeatPrint(void)
 {
-    // static int num = 1;
-
     if (WiFi.status() == WL_CONNECTED)
     {
         s_f->get_data();
+        s_f->display_data();
     }
     else
         Serial.println("Not connected to WiFi");

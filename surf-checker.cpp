@@ -26,6 +26,22 @@ Surf_Checker::Surf_Checker()
     {
         ; // wait for serial port to connect. Needed for native USB port only
     }
+
+    FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+    FastLED.setBrightness(BRIGHTNESS);
+
+    for (int ii = 0; ii < NUM_DIRECTIONS; ii++)
+    {
+        leds[2 * ii] = CHSV(ii * 360 / NUM_DIRECTIONS, 255, 255);
+        leds[2 * ii + 1] = leds[2 * ii];
+    }
+    FastLED.show();
+    delay(1500);
+    for (int ii = 0; ii < NUM_LEDS; ii++)
+    {
+        leds[ii] = CRGB::Black;
+    }
+    FastLED.show();
 }
 
 bool Surf_Checker::update_spot_id(String sid)
@@ -379,4 +395,20 @@ bool Surf_Checker::get_wave()
 bool Surf_Checker::get_wind()
 {
     return get_data(WIND);
+}
+
+void Surf_Checker::display_data()
+{
+    if (!error)
+    {
+        for (int ii = 0; ii < NUM_LEDS; ii++)
+        {
+            leds[ii] = CRGB::Black;
+        }
+        int dir_swell = (int)round(swell_directions[0] * (double)(NUM_DIRECTIONS - 1) / 360.0);
+        int dir_wind = (int)round(wind_direction * (double)(NUM_DIRECTIONS - 1) / 360.0);
+        leds[2 * dir_swell + 1] = CHSV(HUE_AQUA, 255, 255);
+        leds[2 * dir_wind] = CHSV(HUE_BLUE, 255, 255);
+        FastLED.show();
+    }
 }

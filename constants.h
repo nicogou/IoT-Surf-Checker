@@ -5,6 +5,13 @@
 #define QUERY_TIMEOUT 5000
 #define SWELL_NB 6
 
+#define LED_PIN 12
+#define LED_TYPE WS2812B
+#define COLOR_ORDER GRB
+#define NUM_DIRECTIONS 4 // 24
+#define NUM_LEDS (2 * NUM_DIRECTIONS)
+#define BRIGHTNESS 48
+
 enum HttpDataType
 {
     TIME = 0,
