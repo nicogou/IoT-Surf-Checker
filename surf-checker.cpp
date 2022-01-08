@@ -168,6 +168,7 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
 
         // Extract values
         unixtime = doc["unixtime"];
+        Serial.println("Current time : " + String(unixtime));
         return true;
     }
     else if (type == WAVE)
@@ -357,7 +358,6 @@ bool Surf_Checker::get_data(HttpDataType type)
     unsigned long counter = millis();
     while (!http_request(type))
     {
-        delay(200);
         if (millis() - counter >= query_timeout)
         {
             return false;
