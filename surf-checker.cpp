@@ -3,16 +3,22 @@
 Surf_Checker::Surf_Checker(char *ssid, char *pass)
 {
     Serial.begin(9600);
+    unsigned long debug_counter = millis();
     while (!Serial)
     {
-        ; // wait for serial port to connect. Needed for native USB port only
+        // wait for serial port to connect. Needed for native USB port only. If not connected, starts after DEBUG_TIMEOUT ms.
+        if (millis() - debug_counter >= DEBUG_TIMEOUT)
+        {
+            debug = false;
+            break;
+        }
     }
     if (connect(ssid, pass))
     {
     }
     else
     {
-        Serial.println("Connection failed, stopping here");
+        println("Connection failed, stopping here");
         while (true)
         {
         }
@@ -22,9 +28,15 @@ Surf_Checker::Surf_Checker(char *ssid, char *pass)
 Surf_Checker::Surf_Checker()
 {
     Serial.begin(9600);
+    unsigned long debug_counter = millis();
     while (!Serial)
     {
-        ; // wait for serial port to connect. Needed for native USB port only
+        // wait for serial port to connect. Needed for native USB port only. If not connected, starts after DEBUG_TIMEOUT ms.
+        if (millis() - debug_counter >= DEBUG_TIMEOUT)
+        {
+            debug = false;
+            break;
+        }
     }
 
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
@@ -44,11 +56,35 @@ Surf_Checker::Surf_Checker()
     FastLED.show();
 }
 
+void Surf_Checker::print(String s)
+{
+    if (debug)
+    {
+        Serial.print(s);
+    }
+}
+
+void Surf_Checker::println(String s)
+{
+    if (debug)
+    {
+        Serial.println(s);
+    }
+}
+
+void Surf_Checker::println()
+{
+    if (debug)
+    {
+        Serial.println();
+    }
+}
+
 bool Surf_Checker::update_spot_id(String sid)
 {
     if (spot_id != sid)
     {
-        Serial.println("Previous Spot Id : " + spot_id + "\t\t New Spot Id : " + sid);
+        println("Previous Spot Id : " + spot_id + "\t\t New Spot Id : " + sid);
         spot_id = sid;
     }
 }
@@ -65,7 +101,7 @@ bool Surf_Checker::connect(char *ssid, char *pass)
     // check for the WiFi module:
     if (WiFi.status() == WL_NO_MODULE)
     {
-        Serial.println("Communication with WiFi module failed!");
+        println("Communication with WiFi module failed!");
         // don't continue
         return false;
     }
@@ -73,14 +109,14 @@ bool Surf_Checker::connect(char *ssid, char *pass)
     String fv = WiFi.firmwareVersion();
     if (fv < WIFI_FIRMWARE_LATEST_VERSION)
     {
-        Serial.println("Please upgrade the firmware");
+        println("Please upgrade the firmware");
     }
 
     // attempt to connect to WiFi network:
     while (status != WL_CONNECTED)
     {
-        Serial.print("Attempting to connect to SSID: ");
-        Serial.println(ssid);
+        print("Attempting to connect to SSID: ");
+        println(ssid);
         // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
         status = WiFi.begin(ssid, pass);
 
@@ -95,19 +131,21 @@ bool Surf_Checker::connect(char *ssid, char *pass)
 void Surf_Checker::print_wifi_status()
 {
     // print the SSID of the network you're attached to:
-    Serial.print("SSID: ");
-    Serial.println(WiFi.SSID());
+    print("SSID: ");
+    println(WiFi.SSID());
 
     // print your board's IP address:
     IPAddress ip = WiFi.localIP();
-    Serial.print("IP Address: ");
-    Serial.println(ip);
+    println("IP Address: " + String(ip));
+    // Serial.print("IP Address: ");
+    // Serial.println(ip);
 
     // print the received signal strength:
     long rssi = WiFi.RSSI();
-    Serial.print("signal strength (RSSI):");
-    Serial.print(rssi);
-    Serial.println(" dBm");
+    println("signal strength (RSSI):" + String(rssi) + " dBm");
+    // Serial.print("signal strength (RSSI):");
+    // Serial.print(rssi);
+    // Serial.println(" dBm");
 }
 
 bool Surf_Checker::http_request(HttpDataType type)
@@ -117,7 +155,7 @@ bool Surf_Checker::http_request(HttpDataType type)
     // if there's a successful connection:
     if (client.connect(host_name[type_int], 80))
     {
-        Serial.println("connecting to " + String(host_name[type_int]) + "...");
+        println("connecting to " + String(host_name[type_int]) + "...");
         // send the HTTP GET request:
         client.println("GET " + path_name[type_int] + query[type_int] + " HTTP/1.1");
         client.println("Host: " + String(host_name[type_int]));
@@ -128,7 +166,7 @@ bool Surf_Checker::http_request(HttpDataType type)
     else
     {
         // if you couldn't make a connection:
-        Serial.println("connection failed");
+        println("connection failed");
         return false;
     }
 
@@ -138,8 +176,8 @@ bool Surf_Checker::http_request(HttpDataType type)
     // It should be "HTTP/1.0 200 OK" or "HTTP/1.1 200 OK"
     if (strcmp(status + 9, "200 OK") != 0)
     {
-        Serial.print(F("Unexpected response: "));
-        Serial.println(status);
+        print(F("Unexpected response: "));
+        println(status);
         client.stop();
         return false;
     }
@@ -148,7 +186,7 @@ bool Surf_Checker::http_request(HttpDataType type)
     char endOfHeaders[] = "\r\n\r\n";
     if (!client.find(endOfHeaders))
     {
-        Serial.println(F("Invalid response"));
+        println(F("Invalid response"));
         client.stop();
         return false;
     }
@@ -176,8 +214,8 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
         DeserializationError error = deserializeJson(doc, client, DeserializationOption::Filter(filter));
         if (error)
         {
-            Serial.print(F("deserializeJson() failed: "));
-            Serial.println(error.f_str());
+            print(F("deserializeJson() failed: "));
+            println(error.f_str());
             client.stop();
             return false;
         }
@@ -202,8 +240,8 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
         DeserializationError error = deserializeJson(doc, client);
         if (error)
         {
-            Serial.print(F("deserializeJson() failed: "));
-            Serial.println(error.f_str());
+            print(F("deserializeJson() failed: "));
+            println(error.f_str());
             client.stop();
             return false;
         }
@@ -242,16 +280,16 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
                 }
             }
         }
-        // Serial.println("Swell");
-        // Serial.println("Heights\tPeriods\tDirections");
+        // println("Swell");
+        // println("Heights\tPeriods\tDirections");
         // for (int ii = 0; ii < SWELL_NB; ii++)
         // {
-        //     Serial.print(swell_heights[ii]);
-        //     Serial.print("\t");
-        //     Serial.print(swell_periods[ii]);
-        //     Serial.print("\t\t");
-        //     Serial.print(swell_directions[ii]);
-        //     Serial.println();
+        //     print(swell_heights[ii]);
+        //     print("\t");
+        //     print(swell_periods[ii]);
+        //     print("\t\t");
+        //     print(swell_directions[ii]);
+        //     println();
         // }
 
         float temp_h;
@@ -299,8 +337,8 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
         DeserializationError error = deserializeJson(doc, client);
         if (error)
         {
-            Serial.print(F("deserializeJson() failed: "));
-            Serial.println(error.f_str());
+            print(F("deserializeJson() failed: "));
+            println(error.f_str());
             client.stop();
             return false;
         }
@@ -382,29 +420,31 @@ void Surf_Checker::display_data()
 {
     if (!error)
     {
-        Serial.println("Current time : " + String(unixtime));
-        Serial.println();
-        Serial.println("Swells (sorted)");
-        Serial.println("Heights\tPeriods\tDirections");
+        println("Current time : " + String(unixtime));
+        println();
+        println("Swells (sorted)");
+        println("Heights\tPeriods\tDirections");
         for (int ii = 0; ii < SWELL_NB; ii++)
         {
-            Serial.print(swell_heights[ii]);
-            Serial.print("\t");
-            Serial.print(swell_periods[ii]);
-            Serial.print("\t\t");
-            Serial.print(swell_directions[ii]);
-            Serial.println();
+            println(String(swell_heights[ii]) + "\t" + String(swell_periods[ii]) + "\t\t" + String(swell_directions[ii]));
+            // Serial.print(swell_heights[ii]);
+            // Serial.print("\t");
+            // Serial.print(swell_periods[ii]);
+            // Serial.print("\t\t");
+            // Serial.print(swell_directions[ii]);
+            // Serial.println();
         }
-        Serial.println();
-        Serial.println("Wind");
-        Serial.println("Speed\tDirection :");
-        Serial.print(wind_speed);
-        Serial.print("\t");
-        Serial.print(wind_direction);
-        Serial.println();
+        println();
+        println("Wind");
+        println("Speed\tDirection :");
+        println(String(wind_speed) + "\t" + String(wind_direction));
+        // Serial.print(wind_speed);
+        // Serial.print("\t");
+        // Serial.print(wind_direction);
+        // Serial.println();
 
-        Serial.println();
-        Serial.println("Displaying data on LED panel.");
+        println();
+        println("Displaying data on LED panel.");
 
         for (int ii = 0; ii < NUM_LEDS; ii++)
         {
@@ -418,6 +458,6 @@ void Surf_Checker::display_data()
     }
     else
     {
-        Serial.println("An error occured while retrieving data.");
+        println("An error occured while retrieving data.");
     }
 }

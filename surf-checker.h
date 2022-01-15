@@ -27,6 +27,7 @@ public:
     double swell_directions[SWELL_NB];
     int swell_periods[SWELL_NB];
     bool error = false;
+    bool debug = true;
 
     CRGB leds[NUM_LEDS]; // Stores the LED colors (only status LED for now).
 
@@ -48,6 +49,10 @@ public:
     bool get_wind();
 
     void display_data();
+
+    void print(String s);
+    void println(String s);
+    void println();
 
 private:
 };

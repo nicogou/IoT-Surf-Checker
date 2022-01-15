@@ -12,6 +12,8 @@
 #define NUM_LEDS (2 * NUM_DIRECTIONS)
 #define BRIGHTNESS 48
 
+#define DEBUG_TIMEOUT 10000
+
 enum HttpDataType
 {
     TIME = 0,
