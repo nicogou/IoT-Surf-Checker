@@ -184,7 +184,6 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
 
         // Extract values
         unixtime = doc["unixtime"];
-        Serial.println("Current time : " + String(unixtime));
         return true;
     }
     else if (type == WAVE)
@@ -243,17 +242,17 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
                 }
             }
         }
-        Serial.println("Swell");
-        Serial.println("Heights\tPeriods\tDirections");
-        for (int ii = 0; ii < SWELL_NB; ii++)
-        {
-            Serial.print(swell_heights[ii]);
-            Serial.print("\t");
-            Serial.print(swell_periods[ii]);
-            Serial.print("\t\t");
-            Serial.print(swell_directions[ii]);
-            Serial.println();
-        }
+        // Serial.println("Swell");
+        // Serial.println("Heights\tPeriods\tDirections");
+        // for (int ii = 0; ii < SWELL_NB; ii++)
+        // {
+        //     Serial.print(swell_heights[ii]);
+        //     Serial.print("\t");
+        //     Serial.print(swell_periods[ii]);
+        //     Serial.print("\t\t");
+        //     Serial.print(swell_directions[ii]);
+        //     Serial.println();
+        // }
 
         float temp_h;
         double temp_d;
@@ -279,18 +278,6 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
                     swell_periods[jj] = temp_p;
                 }
             }
-        }
-
-        Serial.println("Swell (sorted)");
-        Serial.println("Heights\tPeriods\tDirections");
-        for (int ii = 0; ii < SWELL_NB; ii++)
-        {
-            Serial.print(swell_heights[ii]);
-            Serial.print("\t");
-            Serial.print(swell_periods[ii]);
-            Serial.print("\t\t");
-            Serial.print(swell_directions[ii]);
-            Serial.println();
         }
 
         return true;
@@ -336,12 +323,6 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
                 // int data_wind_item_optimalScore = data_wind_item["optimalScore"];           // 2, 2, 2, 2, 2, 0, 2, 0
             }
         }
-        Serial.println("Wind");
-        Serial.println("Speed\tDirection :");
-        Serial.print(wind_speed);
-        Serial.print("\t");
-        Serial.print(wind_direction);
-        Serial.println();
 
         return true;
     }
@@ -401,6 +382,30 @@ void Surf_Checker::display_data()
 {
     if (!error)
     {
+        Serial.println("Current time : " + String(unixtime));
+        Serial.println();
+        Serial.println("Swells (sorted)");
+        Serial.println("Heights\tPeriods\tDirections");
+        for (int ii = 0; ii < SWELL_NB; ii++)
+        {
+            Serial.print(swell_heights[ii]);
+            Serial.print("\t");
+            Serial.print(swell_periods[ii]);
+            Serial.print("\t\t");
+            Serial.print(swell_directions[ii]);
+            Serial.println();
+        }
+        Serial.println();
+        Serial.println("Wind");
+        Serial.println("Speed\tDirection :");
+        Serial.print(wind_speed);
+        Serial.print("\t");
+        Serial.print(wind_direction);
+        Serial.println();
+
+        Serial.println();
+        Serial.println("Displaying data on LED panel.");
+
         for (int ii = 0; ii < NUM_LEDS; ii++)
         {
             leds[ii] = CRGB::Black;
@@ -410,5 +415,9 @@ void Surf_Checker::display_data()
         leds[2 * dir_swell + 1] = CHSV(HUE_AQUA, 255, 255);
         leds[2 * dir_wind] = CHSV(HUE_BLUE, 255, 255);
         FastLED.show();
+    }
+    else
+    {
+        Serial.println("An error occured while retrieving data.")
     }
 }
