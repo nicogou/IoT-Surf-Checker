@@ -418,6 +418,6 @@ void Surf_Checker::display_data()
     }
     else
     {
-        Serial.println("An error occured while retrieving data.")
+        Serial.println("An error occured while retrieving data.");
     }
 }
