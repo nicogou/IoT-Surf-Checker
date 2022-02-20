@@ -132,10 +132,6 @@ void loop()
     {
         s_f->lightup_led_config_portal(true);
     }
-    else
-    {
-        s_f->lightup_led_config_portal(false);
-    }
 
     check_status();
     s_f->lightup_leds();
