@@ -29,7 +29,7 @@ public:
     bool error = false;
     bool debug = true;
 
-    CRGB leds[NUM_LEDS]; // Stores the LED colors (only status LED for now).
+    CRGB leds[NUM_LEDS]; // Stores the LED colors.
 
     Surf_Checker(char *ssid, char *pass);
     Surf_Checker();
