@@ -58,7 +58,6 @@ void setup()
     Serial.print(F("\nStarting SAMD_WiFiNINA on "));
     Serial.println(BOARD_TYPE);
     Serial.println(WIFIMANAGER_NINA_LITE_VERSION);
-
     WiFiManager_NINA = new WiFiManager_NINA_Lite();
 
     // Optional to change default AP IP(192.168.4.1) and channel(10)
@@ -77,10 +76,12 @@ void setup()
     WiFiManager_NINA->setCORSHeader("Your Access-Control-Allow-Origin");
 #endif
 
+    s_f->lightup_led_setup(true);
     // Set customized DHCP HostName
     WiFiManager_NINA->begin(HOST_NAME);
     // Or use default Hostname "SAMD-WiFiNINA-XXXXXX"
     // WiFiManager_NINA->begin();
+    s_f->lightup_led_setup(false);
 }
 
 #if USE_DYNAMIC_PARAMETERS

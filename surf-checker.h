@@ -33,6 +33,10 @@ public:
 
     Surf_Checker(char *ssid, char *pass);
     Surf_Checker();
+
+    void lightup_led_setup(bool y_or_n);
+    void lightup_led_config_portal(bool y_or_n);
+
     void print_wifi_status();
     bool connect(char *ssid, char *pass);
     // bool http_request(char const *host_name, String path_name, String query_string);

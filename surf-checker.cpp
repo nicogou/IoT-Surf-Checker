@@ -41,19 +41,29 @@ Surf_Checker::Surf_Checker()
 
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
     FastLED.setBrightness(BRIGHTNESS);
+}
 
-    for (int ii = 0; ii < NUM_DIRECTIONS; ii++)
+void Surf_Checker::lightup_led_setup(bool y_or_n)
+{
+    if (y_or_n)
     {
-        leds[2 * ii] = CHSV(ii * 360 / NUM_DIRECTIONS, 255, 255);
-        leds[2 * ii + 1] = leds[2 * ii];
+        for (int ii = 0; ii < NUM_DIRECTIONS; ii++)
+        {
+            leds[2 * ii] = CHSV(ii * 255 / NUM_DIRECTIONS, 255, 255);
+            leds[2 * ii + 1] = leds[2 * ii];
+        }
+        FastLED.show();
+        Serial.println("Lighting up setup LEDs");
     }
-    FastLED.show();
-    delay(1500);
-    for (int ii = 0; ii < NUM_LEDS; ii++)
+    else
     {
-        leds[ii] = CRGB::Black;
+        for (int ii = 0; ii < NUM_LEDS; ii++)
+        {
+            leds[ii] = CRGB::Black;
+        }
+        FastLED.show();
+        Serial.println("Shutting off setup LEDs");
     }
-    FastLED.show();
 }
 
 void Surf_Checker::print(String s)
