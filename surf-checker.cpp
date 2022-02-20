@@ -66,6 +66,26 @@ void Surf_Checker::lightup_led_setup(bool y_or_n)
     }
 }
 
+void Surf_Checker::lightup_led_config_portal(bool y_or_n)
+{
+    if (y_or_n)
+    {
+        for (int ii = 0; ii < NUM_LEDS; ii++)
+        {
+            leds[ii] = CRGB::Red;
+        }
+        FastLED.show();
+    }
+    else
+    {
+        for (int ii = 0; ii < NUM_LEDS; ii++)
+        {
+            leds[ii] = CRGB::Black;
+        }
+        FastLED.show();
+    }
+}
+
 void Surf_Checker::print(String s)
 {
     if (debug)

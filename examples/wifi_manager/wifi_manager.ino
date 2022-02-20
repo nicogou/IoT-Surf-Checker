@@ -129,4 +129,13 @@ void loop()
     s_f->update_spot_id(myMenuItems[1].pdata);
 #endif
     check_status();
+
+    if (WiFiManager_NINA->configuration_mode)
+    {
+        s_f->lightup_led_config_portal(true);
+    }
+    else
+    {
+        s_f->lightup_led_config_portal(false);
+    }
 }
