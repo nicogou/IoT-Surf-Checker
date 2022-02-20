@@ -92,7 +92,7 @@ void Surf_Checker::println()
 
 bool Surf_Checker::update_spot_id(String sid)
 {
-    if (spot_id != sid)
+    if (spot_id != sid && sid != "blank")
     {
         println("Previous Spot Id : " + spot_id + "\t\t New Spot Id : " + sid);
         spot_id = sid;
