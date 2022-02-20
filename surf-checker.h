@@ -30,12 +30,14 @@ public:
     bool debug = true;
 
     CRGB leds[NUM_LEDS]; // Stores the LED colors.
+    unsigned long time_since_last_show = 0;
 
     Surf_Checker(char *ssid, char *pass);
     Surf_Checker();
 
     void lightup_led_setup(bool y_or_n);
     void lightup_led_config_portal(bool y_or_n);
+    void lightup_leds();
 
     void print_wifi_status();
     bool connect(char *ssid, char *pass);

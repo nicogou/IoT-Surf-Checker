@@ -53,6 +53,7 @@ void Surf_Checker::lightup_led_setup(bool y_or_n)
             leds[2 * ii + 1] = leds[2 * ii];
         }
         FastLED.show();
+        time_since_last_show = millis();
         Serial.println("Lighting up setup LEDs");
     }
     else
@@ -62,6 +63,7 @@ void Surf_Checker::lightup_led_setup(bool y_or_n)
             leds[ii] = CRGB::Black;
         }
         FastLED.show();
+        time_since_last_show = millis();
         Serial.println("Shutting off setup LEDs");
     }
 }
@@ -70,11 +72,14 @@ void Surf_Checker::lightup_led_config_portal(bool y_or_n)
 {
     if (y_or_n)
     {
-        for (int ii = 0; ii < NUM_LEDS; ii++)
+
+        if (millis() - time_since_last_show > 1000 / FRAMES_PER_SECOND)
         {
-            leds[ii] = CRGB::Red;
+            fadeToBlackBy(leds, NUM_LEDS, 20);
+            int pos = beatsin16(13, 0, NUM_DIRECTIONS);
+            leds[2 * pos] += CHSV(pos * 255 / NUM_DIRECTIONS, 255, 192);
+            leds[2 * pos + 1] += CHSV(pos * 255 / NUM_DIRECTIONS, 255, 192);
         }
-        FastLED.show();
     }
     else
     {
@@ -82,7 +87,15 @@ void Surf_Checker::lightup_led_config_portal(bool y_or_n)
         {
             leds[ii] = CRGB::Black;
         }
+    }
+}
+
+void Surf_Checker::lightup_leds()
+{
+    if (millis() - time_since_last_show > 1000 / FRAMES_PER_SECOND)
+    {
         FastLED.show();
+        time_since_last_show = millis();
     }
 }
 
@@ -484,7 +497,6 @@ void Surf_Checker::display_data()
         int dir_wind = (int)round(wind_direction * (double)(NUM_DIRECTIONS - 1) / 360.0);
         leds[2 * dir_swell + 1] = CHSV(HUE_AQUA, 255, 255);
         leds[2 * dir_wind] = CHSV(HUE_BLUE, 255, 255);
-        FastLED.show();
     }
     else
     {
