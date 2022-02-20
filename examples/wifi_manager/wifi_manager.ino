@@ -81,7 +81,6 @@ void setup()
     WiFiManager_NINA->begin(HOST_NAME);
     // Or use default Hostname "SAMD-WiFiNINA-XXXXXX"
     // WiFiManager_NINA->begin();
-    s_f->lightup_led_setup(false);
 }
 
 #if USE_DYNAMIC_PARAMETERS
