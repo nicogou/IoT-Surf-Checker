@@ -77,8 +77,8 @@ void Surf_Checker::lightup_led_config_portal(bool y_or_n)
         {
             fadeToBlackBy(leds, NUM_LEDS, 20);
             int pos = beatsin16(13, 0, NUM_DIRECTIONS);
-            leds[2 * pos] += CHSV(pos * 255 / NUM_DIRECTIONS, 255, 192);
-            leds[2 * pos + 1] += CHSV(pos * 255 / NUM_DIRECTIONS, 255, 192);
+            leds[(2 * pos) % NUM_LEDS] += CHSV(pos * 255 / NUM_DIRECTIONS, 255, 192);
+            leds[(NUM_LEDS + 1 - (2 * pos)) % NUM_LEDS] += CHSV(pos * 255 / NUM_DIRECTIONS, 255, 192);
         }
     }
     else
