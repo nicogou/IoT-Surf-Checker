@@ -127,7 +127,7 @@ void loop()
     displayCredentialsInLoop();
     s_f->update_spot_id(myMenuItems[1].pdata);
 #endif
-    if (WiFiManager_NINA->configuration_mode)
+    if (WiFiManager_NINA->isConfigMode())
     {
         s_f->lightup_led_config_portal(true);
     }
