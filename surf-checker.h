@@ -14,9 +14,15 @@ public:
     String spot_id = "5842041f4e65fad6a7708bca"; // grande plage Biarritz;
     String nb_days = "1";
     uint8_t interval_hours = 3;
-    char const *host_name[NB_REQUESTS] = {"worldtimeapi.org", "services.surfline.com", "services.surfline.com"};
-    String path_name[NB_REQUESTS] = {"/api/", "/kbyg/spots/forecasts/", "/kbyg/spots/forecasts/"};
-    String query[NB_REQUESTS] = {"ip", "wave?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours), "wind?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours)};
+    char const *host_name[NB_REQUESTS] = {"worldtimeapi.org", "services.surfline.com", "services.surfline.com", "services.surfline.com", "services.surfline.com"};
+    String path_name[NB_REQUESTS] = {"/api/", "/kbyg/spots/forecasts/", "/kbyg/spots/forecasts/", "/kbyg/spots/forecasts/", "/kbyg/spots/forecasts/"};
+    String query[NB_REQUESTS] = {
+        "ip",
+        "wave?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours),
+        "wind?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours),
+        "tides?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours),
+        "weather?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours),
+    };
     unsigned long query_timeout = QUERY_TIMEOUT;
 
     long unixtime = 0;
@@ -26,6 +32,8 @@ public:
     float swell_heights[SWELL_NB];
     double swell_directions[SWELL_NB];
     int swell_periods[SWELL_NB];
+    int tide;           // 0 = low tide, 11 = high tide
+    int next_tide = 11; // assume high tide comes next.
     bool error = false;
     bool debug = true;
 
@@ -53,6 +61,7 @@ public:
     bool get_time();
     bool get_wave();
     bool get_wind();
+    bool get_tides();
 
     void display_data();
 

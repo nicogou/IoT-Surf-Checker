@@ -137,6 +137,8 @@ void Surf_Checker::build_query()
     query[0] = "ip";
     query[1] = "wave?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours);
     query[2] = "wind?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours);
+    query[3] = "tides?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours);
+    query[4] = "weather?spotId=" + spot_id + "&days=" + nb_days + "&intervalHours=" + String(interval_hours);
 }
 
 bool Surf_Checker::connect(char *ssid, char *pass)
@@ -296,7 +298,7 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
 
             long data_wave_item_timestamp = data_wave_item["timestamp"]; // 1640905200, 1640916000, 1640926800, ...
 
-            if (unixtime - data_wave_item_timestamp >= 0 && unixtime - data_wave_item_timestamp < interval_hours * 60 * 60)
+            if (unixtime - data_wave_item_timestamp >= 0 && unixtime - data_wave_item_timestamp < interval_hours * HOURS_TO_SECONDS)
             {
 
                 // int data_wave_item_utcOffset = data_wave_item["utcOffset"]; // 1, 1, 1, 1, 1, 1, 1, 1
@@ -391,7 +393,7 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
         {
 
             long data_wind_item_timestamp = data_wind_item["timestamp"]; // 1640905200, 1640916000, 1640926800, ...
-            if (unixtime - data_wind_item_timestamp >= 0 && unixtime - data_wind_item_timestamp < interval_hours * 60 * 60)
+            if (unixtime - data_wind_item_timestamp >= 0 && unixtime - data_wind_item_timestamp < interval_hours * HOURS_TO_SECONDS)
             {
 
                 // int data_wind_item_utcOffset = data_wind_item["utcOffset"]; // 1, 1, 1, 1, 1, 1, 1, 1
@@ -406,6 +408,93 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
         }
 
         return true;
+    }
+    else if (type == TIDES)
+    {
+        // Allocate the JSON document
+        // Use https://arduinojson.org/v6/assistant to compute the capacity.
+        const size_t capacity = 3072;
+        DynamicJsonDocument doc(capacity);
+
+        // Parse JSON object
+        // There are four chars before the JSON object. They may correspond to the byte order mark (see https://arduinojson.org/v6/api/misc/deserializationerror/ for details). This loop gets rid of them and enables the correct reading of the JSON.
+        for (int ii = 0; ii < 4; ii++)
+        {
+            client.read();
+        }
+
+        DeserializationError error = deserializeJson(doc, client);
+        if (error)
+        {
+            print(F("deserializeJson() failed: "));
+            println(error.f_str());
+            client.stop();
+            return false;
+        }
+
+        long tides_timestamp[MAX_TIDES_NB] = {0, 0, 0, 0};
+        const char *tides_type[MAX_TIDES_NB] = {"",
+                                                "",
+                                                "",
+                                                ""};
+        int nb_tides = 0;
+
+        // Extract values
+        for (JsonObject data_tides_item : doc["data"]["tides"].as<JsonArray>())
+        {
+            long data_tides_item_timestamp = data_tides_item["timestamp"]; // 1649800800, 1649804400, 1649808000, 1649811600, ...
+            // int data_tides_item_utcOffset = data_tides_item["utcOffset"];  // 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ...
+            const char *data_tides_item_type = data_tides_item["type"]; // "NORMAL", "NORMAL", "NORMAL", "NORMAL", "HIGH", ...
+            // float data_tides_item_height = data_tides_item["height"];      // 1.89, 2.3, 2.64, 2.8, 2.81, 2.74, 2.46, 2, 1.5, 1.08, ...
+            if (strcmp(data_tides_item_type, "HIGH") == 0 || strcmp(data_tides_item_type, "LOW") == 0)
+            {
+                tides_type[nb_tides] = data_tides_item_type;
+                tides_timestamp[nb_tides] = data_tides_item_timestamp;
+                nb_tides++;
+            }
+        }
+
+        /*println("Types\tTimestamps");
+        for (int ii = 0; ii < nb_tides; ii++)
+        {
+            println(String(tides_type[ii]) + " \t" + String(tides_timestamp[ii]));
+        }*/
+        for (int ii = 0; ii < nb_tides; ii++)
+        {
+            if (unixtime <= tides_timestamp[ii])
+            {
+                tide = NUM_LEDS_SIDE_PANELS - NUM_LEDS_SIDE_PANELS * (tides_timestamp[ii] - unixtime) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
+                if (strcmp(tides_type[ii], "HIGH") == 0)
+                {
+                    next_tide = HIGH_TIDE;
+                }
+                else
+                {
+                    next_tide = LOW_TIDE;
+                }
+                println("Tide\tNext Tide");
+                println(String(tide) + "\t" + String(next_tide));
+                return true;
+            }
+        }
+        if (unixtime >= tides_timestamp[nb_tides])
+        {
+            tide = NUM_LEDS_SIDE_PANELS * (unixtime - tides_timestamp[nb_tides]) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
+            if (strcmp(tides_type[nb_tides], "HIGH") == 0)
+            {
+                next_tide = LOW_TIDE;
+            }
+            else
+            {
+                next_tide = HIGH_TIDE;
+            }
+            println("Tide\tNext Tide");
+            println(String(tide) + "\t" + String(next_tide));
+            return true;
+        }
+    }
+    else if (type == WEATHER)
+    {
     }
 
     return false;
@@ -424,6 +513,11 @@ void Surf_Checker::get_data()
         return;
     }
     if (!get_wind())
+    {
+        error = true;
+        return;
+    }
+    if (!get_tides())
     {
         error = true;
         return;
@@ -457,6 +551,11 @@ bool Surf_Checker::get_wave()
 bool Surf_Checker::get_wind()
 {
     return get_data(WIND);
+}
+
+bool Surf_Checker::get_tides()
+{
+    return get_data(TIDES);
 }
 
 void Surf_Checker::display_data()
