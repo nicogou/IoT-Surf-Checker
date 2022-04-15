@@ -39,7 +39,16 @@ Surf_Checker::Surf_Checker()
         }
     }
 
-    FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<LED_TYPE, LED_PIN_CLOCK, COLOR_ORDER>(leds_clock, NUM_LEDS_CLOCK).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<LED_TYPE, LED_PIN_SIDES, COLOR_ORDER>(leds_sides, NUM_LEDS_SIDES).setCorrection(TypicalLEDStrip);
+    for (int ii = 0; ii < NUM_LEDS_CLOCK; ii++)
+    {
+        leds_clock[ii] = CRGB::Black;
+    }
+    for (int ii = 0; ii < NUM_LEDS_SIDES; ii++)
+    {
+        leds_sides[ii] = CRGB::Black;
+    }
     FastLED.setBrightness(BRIGHTNESS);
 }
 
@@ -49,8 +58,8 @@ void Surf_Checker::lightup_led_setup(bool y_or_n)
     {
         for (int ii = 0; ii < NUM_DIRECTIONS; ii++)
         {
-            leds[2 * ii] = CHSV(ii * 255 / NUM_DIRECTIONS, 255, 255);
-            leds[2 * ii + 1] = leds[2 * ii];
+            leds_clock[2 * ii] = CHSV(ii * 255 / NUM_DIRECTIONS, 255, 255);
+            leds_clock[2 * ii + 1] = leds_clock[2 * ii];
         }
         FastLED.show();
         time_since_last_show = millis();
@@ -58,9 +67,9 @@ void Surf_Checker::lightup_led_setup(bool y_or_n)
     }
     else
     {
-        for (int ii = 0; ii < NUM_LEDS; ii++)
+        for (int ii = 0; ii < NUM_LEDS_CLOCK; ii++)
         {
-            leds[ii] = CRGB::Black;
+            leds_clock[ii] = CRGB::Black;
         }
         FastLED.show();
         time_since_last_show = millis();
@@ -75,17 +84,17 @@ void Surf_Checker::lightup_led_config_portal(bool y_or_n)
 
         if (millis() - time_since_last_show > 1000 / FRAMES_PER_SECOND)
         {
-            fadeToBlackBy(leds, NUM_LEDS, 20);
+            fadeToBlackBy(leds_clock, NUM_LEDS_CLOCK, 20);
             int pos = beatsin16(13, 0, NUM_DIRECTIONS);
-            leds[(2 * pos) % NUM_LEDS] += CHSV(pos * 255 / NUM_DIRECTIONS, 255, 192);
-            leds[(NUM_LEDS + 1 - (2 * pos)) % NUM_LEDS] += CHSV(pos * 255 / NUM_DIRECTIONS, 255, 192);
+            leds_clock[(2 * pos) % NUM_LEDS_CLOCK] += CHSV(pos * 255 / NUM_DIRECTIONS, 255, 192);
+            leds_clock[(NUM_LEDS_CLOCK + 1 - (2 * pos)) % NUM_LEDS_CLOCK] += CHSV(pos * 255 / NUM_DIRECTIONS, 255, 192);
         }
     }
     else
     {
-        for (int ii = 0; ii < NUM_LEDS; ii++)
+        for (int ii = 0; ii < NUM_LEDS_CLOCK; ii++)
         {
-            leds[ii] = CRGB::Black;
+            leds_clock[ii] = CRGB::Black;
         }
     }
 }
@@ -461,9 +470,10 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
         }*/
         for (int ii = 0; ii < nb_tides; ii++)
         {
+            println(String(tides_timestamp[ii]));
             if (unixtime <= tides_timestamp[ii])
             {
-                tide = NUM_LEDS_SIDE_PANELS - NUM_LEDS_SIDE_PANELS * (tides_timestamp[ii] - unixtime) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
+                tide = NUM_LEDS_PANELS - NUM_LEDS_PANELS * (tides_timestamp[ii] - unixtime) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
                 if (strcmp(tides_type[ii], "HIGH") == 0)
                 {
                     next_tide = HIGH_TIDE;
@@ -479,7 +489,11 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
         }
         if (unixtime >= tides_timestamp[nb_tides])
         {
-            tide = NUM_LEDS_SIDE_PANELS * (unixtime - tides_timestamp[nb_tides]) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
+            println("map");
+            println(String(unixtime - tides_timestamp[nb_tides]));
+            println(String(TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS));
+            tide = map(unixtime - tides_timestamp[nb_tides], 0, TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS, 0, NUM_LEDS_PANELS);
+            // tide = NUM_LEDS_PANELS * (unixtime - tides_timestamp[nb_tides]) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
             if (strcmp(tides_type[nb_tides], "HIGH") == 0)
             {
                 next_tide = LOW_TIDE;
@@ -588,14 +602,30 @@ void Surf_Checker::display_data()
         println();
         println("Displaying data on LED panel.");
 
-        for (int ii = 0; ii < NUM_LEDS; ii++)
+        for (int ii = 0; ii < NUM_LEDS_CLOCK; ii++)
         {
-            leds[ii] = CRGB::Black;
+            leds_clock[ii] = CRGB::Black;
         }
+        for (int ii = 0; ii < NUM_LEDS_SIDES; ii++)
+        {
+            leds_sides[ii] = CRGB::Black;
+        }
+        // Swell
         int dir_swell = (int)round(swell_directions[0] * (double)(NUM_DIRECTIONS - 1) / 360.0);
         int dir_wind = (int)round(wind_direction * (double)(NUM_DIRECTIONS - 1) / 360.0);
-        leds[2 * dir_swell + 1] = CHSV(HUE_AQUA, 255, 255);
-        leds[2 * dir_wind] = CHSV(HUE_BLUE, 255, 255);
+        leds_clock[2 * dir_swell + 1] = CHSV(HUE_AQUA, 255, 255);
+        leds_clock[2 * dir_wind] = CHSV(HUE_BLUE, 255, 255);
+
+        // Tide
+        if (tide >= 0 && tide < 11)
+        {
+            leds_sides[tide] = CRGB::Red;
+        }
+        else
+        {
+            println("Something wrong with the tide calculations...");
+        }
+        leds_sides[next_tide] = CRGB::Green;
     }
     else
     {

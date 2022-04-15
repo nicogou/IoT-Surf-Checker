@@ -32,12 +32,13 @@ public:
     float swell_heights[SWELL_NB];
     double swell_directions[SWELL_NB];
     int swell_periods[SWELL_NB];
-    int tide;           // 0 = low tide, 11 = high tide
-    int next_tide = 11; // assume high tide comes next.
+    long tide;                 // 0 = low tide, 11 = high tide
+    int next_tide = HIGH_TIDE; // assume high tide comes next.
     bool error = false;
     bool debug = true;
 
-    CRGB leds[NUM_LEDS]; // Stores the LED colors.
+    CRGB leds_clock[NUM_LEDS_CLOCK]; // Stores the LED colors for the clock.
+    CRGB leds_sides[NUM_LEDS_SIDES]; // Stores the LED colors for the side panels.
     unsigned long time_since_last_show = 0;
 
     Surf_Checker(char *ssid, char *pass);
