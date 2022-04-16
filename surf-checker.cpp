@@ -606,36 +606,36 @@ void Surf_Checker::display_data()
         }
         // Swell
         int dir_swell = (int)round(swell_directions[0] * (double)(NUM_DIRECTIONS - 1) / 360.0);
-        leds_clock[2 * dir_swell + 1] = CHSV(HUE_AQUA, 255, 255);
+        leds_clock[2 * dir_swell + 1] = COLOR_SWELL_DIR;
         int period_swell = ((NUM_LEDS_PANELS - 1) * swell_periods[0]) / MAX_SWELL_PERIOD;
         if (period_swell > NUM_LEDS_PANELS - 1)
         {
             period_swell = NUM_LEDS_PANELS - 1;
         }
-        leds_sides[PANEL_SWELL_PERIOD * NUM_LEDS_PANELS + period_swell] = CRGB::Orange;
+        leds_sides[PANEL_SWELL_PERIOD * NUM_LEDS_PANELS + period_swell] = COLOR_SWELL_PERIOD;
 
         // Wind
         int dir_wind = (int)round(wind_direction * (double)(NUM_DIRECTIONS - 1) / 360.0);
-        leds_clock[2 * dir_wind] = CHSV(HUE_BLUE, 255, 255);
+        leds_clock[2 * dir_wind] = COLOR_WIND_DIR;
         int speed_wind = (NUM_LEDS_PANELS - 1) - (int)(((float)(NUM_LEDS_PANELS - 1) * wind_speed) / MAX_WIND_SPEED);
         if (speed_wind > NUM_LEDS_PANELS - 1)
         {
             speed_wind = NUM_LEDS_PANELS - 1;
         }
-        leds_sides[PANEL_WIND_SPEED * NUM_LEDS_PANELS + speed_wind] = CRGB::Purple;
+        leds_sides[PANEL_WIND_SPEED * NUM_LEDS_PANELS + speed_wind] = COLOR_WIND_SPEED;
 
         // Tide
         println("Tide\tNext Tide");
         println(String(tide) + "\t" + String(next_tide));
         if (tide >= 0 && tide < NUM_LEDS_PANELS)
         {
-            leds_sides[PANEL_TIDE * NUM_LEDS_PANELS + tide] = CRGB::Red;
+            leds_sides[PANEL_TIDE * NUM_LEDS_PANELS + tide] = COLOR_CUR_TIDE;
         }
         else
         {
             println("Something wrong with the tide calculations...");
         }
-        leds_sides[PANEL_TIDE * NUM_LEDS_PANELS + next_tide] = CRGB::Green;
+        leds_sides[PANEL_TIDE * NUM_LEDS_PANELS + next_tide] = COLOR_NEXT_TIDE;
     }
     else
     {
