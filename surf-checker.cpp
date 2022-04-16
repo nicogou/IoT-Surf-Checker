@@ -605,7 +605,13 @@ void Surf_Checker::display_data()
             leds_sides[ii] = CRGB::Black;
         }
         // Swell
-        int dir_swell = (int)round(swell_directions[0] * (double)(NUM_DIRECTIONS - 1) / 360.0);
+        // Going from Surfline's frame to the PCB's frame
+        double direction_swell = 180.0 - swell_directions[0];
+        if (direction_swell < 0.0)
+        {
+            direction_swell = direction_swell + 360.0;
+        }
+        int dir_swell = (int)round(direction_swell * (double)(NUM_DIRECTIONS - 1) / 360.0);
         leds_clock[2 * dir_swell + 1] = COLOR_SWELL_DIR;
         int period_swell = ((NUM_LEDS_PANELS - 1) * swell_periods[0]) / MAX_SWELL_PERIOD;
         if (period_swell > NUM_LEDS_PANELS - 1)
@@ -615,7 +621,13 @@ void Surf_Checker::display_data()
         leds_sides[PANEL_SWELL_PERIOD * NUM_LEDS_PANELS + period_swell] = COLOR_SWELL_PERIOD;
 
         // Wind
-        int dir_wind = (int)round(wind_direction * (double)(NUM_DIRECTIONS - 1) / 360.0);
+        // Going from Surfline's frame to the PCB's frame
+        double direction_wind = 180.0 - wind_direction;
+        if (direction_wind < 0.0)
+        {
+            direction_wind = direction_wind + 360.0;
+        }
+        int dir_wind = (int)round(direction_wind * (double)(NUM_DIRECTIONS - 1) / 360.0);
         leds_clock[2 * dir_wind] = COLOR_WIND_DIR;
         int speed_wind = (NUM_LEDS_PANELS - 1) - (int)(((float)(NUM_LEDS_PANELS - 1) * wind_speed) / MAX_WIND_SPEED);
         if (speed_wind > NUM_LEDS_PANELS - 1)
