@@ -614,9 +614,15 @@ void Surf_Checker::display_data()
         }
         // Swell
         int dir_swell = (int)round(swell_directions[0] * (double)(NUM_DIRECTIONS - 1) / 360.0);
-        int dir_wind = (int)round(wind_direction * (double)(NUM_DIRECTIONS - 1) / 360.0);
         leds_clock[2 * dir_swell + 1] = CHSV(HUE_AQUA, 255, 255);
+
+        // Wind
+        int dir_wind = (int)round(wind_direction * (double)(NUM_DIRECTIONS - 1) / 360.0);
         leds_clock[2 * dir_wind] = CHSV(HUE_BLUE, 255, 255);
+        int speed_wind = (NUM_LEDS_PANELS - 1) - (int)((float)(NUM_LEDS_PANELS - 1) * wind_speed / MAX_WIND_SPEED);
+        println("Wind speed (km/h) : " + String(wind_speed));
+        println("Wind speed (leds) : " + String(speed_wind));
+        leds_sides[PANEL_WIND_SPEED * NUM_LEDS_PANELS + speed_wind] = CRGB::Purple;
 
         // Tide
         if (tide >= 0 && tide < NUM_LEDS_PANELS)

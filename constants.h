@@ -33,6 +33,8 @@
 #define TIDE_SECONDS (30)
 #define MAX_TIDES_NB 4
 
+#define MAX_WIND_SPEED (30.0f)
+
 enum HttpDataType
 {
     TIME = 0,
