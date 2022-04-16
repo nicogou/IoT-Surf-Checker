@@ -473,7 +473,7 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
             println(String(tides_timestamp[ii]));
             if (unixtime < tides_timestamp[ii])
             {
-                tide = NUM_LEDS_PANELS - NUM_LEDS_PANELS * (tides_timestamp[ii] - unixtime) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
+                tide = HIGH_TIDE - HIGH_TIDE * (tides_timestamp[ii] - unixtime) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
                 if (strcmp(tides_type[ii], "HIGH") == 0)
                 {
                     next_tide = HIGH_TIDE;
@@ -493,8 +493,8 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
             println("map");
             println(String(unixtime - tides_timestamp[nb_tides - 1]));
             println(String(TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS));
-            tide = map(unixtime - tides_timestamp[nb_tides - 1], 0, TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS, 0, NUM_LEDS_PANELS);
-            // tide = NUM_LEDS_PANELS * (unixtime - tides_timestamp[nb_tides - 1]) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
+            tide = map(unixtime - tides_timestamp[nb_tides - 1], 0, TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS, 0, HIGH_TIDE);
+            // tide = HIGH_TIDE * (unixtime - tides_timestamp[nb_tides - 1]) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
             if (strcmp(tides_type[nb_tides], "HIGH") == 0)
             {
                 next_tide = LOW_TIDE;
