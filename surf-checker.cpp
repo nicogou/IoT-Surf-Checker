@@ -483,29 +483,21 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
                     next_tide = LOW_TIDE;
                     tide = HIGH_TIDE - tide;
                 }
-                println("Tide\tNext Tide");
-                println(String(tide) + "\t" + String(next_tide));
                 return true;
             }
         }
         if (unixtime >= tides_timestamp[nb_tides - 1])
         {
-            println("map");
-            println(String(unixtime - tides_timestamp[nb_tides - 1]));
-            println(String(TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS));
-            tide = map(unixtime - tides_timestamp[nb_tides - 1], 0, TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS, 0, HIGH_TIDE);
-            // tide = HIGH_TIDE * (unixtime - tides_timestamp[nb_tides - 1]) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
-            if (strcmp(tides_type[nb_tides], "HIGH") == 0)
+            tide = HIGH_TIDE * (unixtime - tides_timestamp[nb_tides - 1]) / (TIDE_HOURS * HOURS_TO_SECONDS + TIDE_MINUTES * MINUTES_TO_SECONDS + TIDE_SECONDS);
+            if (strcmp(tides_type[nb_tides - 1], "HIGH") == 0)
             {
                 next_tide = LOW_TIDE;
+                tide = HIGH_TIDE - tide;
             }
             else
             {
                 next_tide = HIGH_TIDE;
-                tide = HIGH_TIDE - tide;
             }
-            println("Tide\tNext Tide");
-            println(String(tide) + "\t" + String(next_tide));
             return true;
         }
     }
@@ -629,6 +621,8 @@ void Surf_Checker::display_data()
         leds_sides[PANEL_WIND_SPEED * NUM_LEDS_PANELS + speed_wind] = CRGB::Purple;
 
         // Tide
+        println("Tide\tNext Tide");
+        println(String(tide) + "\t" + String(next_tide));
         if (tide >= 0 && tide < NUM_LEDS_PANELS)
         {
             leds_sides[PANEL_TIDE * NUM_LEDS_PANELS + tide] = CRGB::Red;
