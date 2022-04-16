@@ -35,6 +35,8 @@
 
 #define MAX_WIND_SPEED (30.0f)
 
+#define MAX_SWELL_PERIOD 30
+
 enum HttpDataType
 {
     TIME = 0,
