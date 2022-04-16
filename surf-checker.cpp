@@ -619,15 +619,15 @@ void Surf_Checker::display_data()
         leds_clock[2 * dir_wind] = CHSV(HUE_BLUE, 255, 255);
 
         // Tide
-        if (tide >= 0 && tide < 11)
+        if (tide >= 0 && tide < NUM_LEDS_PANELS)
         {
-            leds_sides[tide] = CRGB::Red;
+            leds_sides[PANEL_TIDE * NUM_LEDS_PANELS + tide] = CRGB::Red;
         }
         else
         {
             println("Something wrong with the tide calculations...");
         }
-        leds_sides[next_tide] = CRGB::Green;
+        leds_sides[PANEL_TIDE * NUM_LEDS_PANELS + next_tide] = CRGB::Green;
     }
     else
     {
