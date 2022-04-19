@@ -30,6 +30,7 @@ public:
     float wind_speed = 0;
     double wind_direction = 0;
     float swell_heights[SWELL_NB];
+    float surf_height[2]; // id 0 = min, then id 1 = max
     double swell_directions[SWELL_NB];
     int swell_periods[SWELL_NB];
     long tide;                 // 0 = low tide, 11 = high tide

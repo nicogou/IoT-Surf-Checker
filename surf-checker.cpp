@@ -312,10 +312,15 @@ bool Surf_Checker::parse_http_response(HttpDataType type)
 
                 // int data_wave_item_utcOffset = data_wave_item["utcOffset"]; // 1, 1, 1, 1, 1, 1, 1, 1
 
-                // JsonObject data_wave_item_surf = data_wave_item["surf"];
-                // float data_wave_item_surf_min = data_wave_item_surf["min"];                 // 1.31, 1.32, 1.02, 0.94, 0.94, 0.89, 1, ...
-                // float data_wave_item_surf_max = data_wave_item_surf["max"];                 // 1.62, 1.46, 1.32, 1.25, 1.24, 1.19, 1.11, ...
+                JsonObject data_wave_item_surf = data_wave_item["surf"];
+                float data_wave_item_surf_min = data_wave_item_surf["min"]; // 1.31, 1.32, 1.02, 0.94, 0.94, 0.89, 1, ...
+                surf_height[0] = data_wave_item_surf_min;
+                float data_wave_item_surf_max = data_wave_item_surf["max"]; // 1.62, 1.46, 1.32, 1.25, 1.24, 1.19, 1.11, ...
+                surf_height[1] = data_wave_item_surf_max;
                 // int data_wave_item_surf_optimalScore = data_wave_item_surf["optimalScore"]; // 2, 2, 2, 2, 2, 2, 2, 2
+                // bool data_wave_item_surf_plus = data_wave_item_surf["plus"];                          // false, false, false, false, false, ...
+                // const char *data_wave_item_surf_humanRelation = data_wave_item_surf["humanRelation"]; // "Waist to ...
+
                 int ii_wave = 0;
                 for (JsonObject data_wave_item_swell : data_wave_item["swells"].as<JsonArray>())
                 {
@@ -619,6 +624,12 @@ void Surf_Checker::display_data()
             period_swell = NUM_LEDS_PANELS - 1;
         }
         leds_sides[PANEL_SWELL_PERIOD * NUM_LEDS_PANELS + period_swell] = COLOR_SWELL_PERIOD;
+
+        // Surf height
+        int min_surf = (NUM_LEDS_PANELS - 1) - (int)(((float)(NUM_LEDS_PANELS - 1) * surf_height[0]) / MAX_SURF_HEIGHT);
+        int max_surf = (NUM_LEDS_PANELS - 1) - (int)(((float)(NUM_LEDS_PANELS - 1) * surf_height[1]) / MAX_SURF_HEIGHT);
+        leds_sides[PANEL_SURF * NUM_LEDS_PANELS + min_surf] = COLOR_SURF_MIN;
+        leds_sides[PANEL_SURF * NUM_LEDS_PANELS + max_surf] = COLOR_SURF_MAX;
 
         // Wind
         // Going from Surfline's frame to the PCB's frame
