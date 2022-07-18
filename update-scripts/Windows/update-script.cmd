@@ -49,6 +49,8 @@ arduino-cli compile --fqbn %target% %path_to_example%
 ECHO %ERRORLEVEL% 
 IF %ERRORLEVEL% NEQ 0 (
   ECHO Compilation has failed.
+  pause
+  EXIT
 )
 ECHO Starting upload...
 arduino-cli upload -p %nano_com_port% --fqbn %target% %path_to_example%
