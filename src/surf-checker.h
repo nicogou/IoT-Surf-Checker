@@ -4,7 +4,7 @@
 #include <WiFiNINA_Generic.h>
 #include <ArduinoJson.h>
 // #define ARDUINOJSON_USE_DOUBLE 1
-#include <constants.h>
+#include <constants/constants.h>
 #include <FastLED.h>
 
 class Surf_Checker
