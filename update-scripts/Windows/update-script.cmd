@@ -11,9 +11,9 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 arduino-cli lib update-index
-arduino-cli lib install FastLED WiFiNINA_Generic WiFiManager_NINA_Lite ArduinoJson
+arduino-cli lib install IoT-Surf-Checker
 IF %ERRORLEVEL% NEQ 0 (
-  REM Surf Checker dependencies has not been installed properly.
+  REM Surf Checker lib has not been installed properly.
 )
 
 SET count=0
@@ -57,6 +57,8 @@ arduino-cli upload -p %nano_com_port% --fqbn %target% %path_to_example%
 ECHO %ERRORLEVEL%
 IF %ERRORLEVEL% NEQ 0 (
   ECHO Upload has failed.
+  pause
+  EXIT
 )
 
 pause
